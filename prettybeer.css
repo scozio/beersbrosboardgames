@@ -1,0 +1,125 @@
+
+:root{
+    --color-1:#8722af;
+    --color-2:#20d1a2;
+    --color-3:#1FD8A7;
+    --color-4:#22E3AF;
+    --color-5:#BC9622;
+}
+/* <uniquifier>: Use a unique and descriptive class name
+ <weight>: Use a value from 100 to 400*/
+/*
+.playwrite-au-vic-viccursive {
+  font-family: "Playwrite AU VIC", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}*/
+body{
+    background-color: black
+}
+/*
+.BB1{
+    text-emphasis: bold;
+    text-align: center;
+    animation-name: BrBeB1;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+    background-color: var(--color-2);
+    font-family: "Boracho";
+    image-resolution: 1080p;
+    
+}
+@keyframes BrBeB1{
+    0% {text-shadow: 0px 0px var(--color-1);font-size: 0px;color:var(--color-5);}
+    100%{text-shadow: 1.5px 1.5px  var(--color-5);font-size: 55px;color:var(--color-1);}
+
+}
+*/
+/*
+.finalFilepng{
+    font-family: "Playwrite AU VIC";
+    text-align: center;
+    text-emphasis: bold;
+    animation-name: BrBeB2;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+    
+    
+    background-color: #8722af;
+}
+
+@keyframes BrBeB2{
+    0% {width:0px; height: 0px;}
+    100%{width: 250px; height: 100px;}
+
+    0% {text-shadow: 0px 0px  #8722af;font-size: 0px;color:#20d1a2;}
+    100%{text-shadow: 1.5px 1.5px  #BC9622;font-size: 55px;color:#20d1a2;}*/
+
+
+h1.BB3{
+    position:sticky;
+    z-index: 1;
+    display:grid;
+    grid-column: 1;
+    grid-row: 1;
+    font-family: "Boracho";
+    text-align: center;
+    overflow: hidden;
+    animation-name: BrBeB3;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+    background-color:#8722af;
+}
+@keyframes BrBeB3{
+    0% {text-shadow: 0px 0px #BC9622; font-size: 55px;color:#20d1a2;}
+    100%{text-shadow: 1.5px 1.5px #20d1a2 ;font-size: 55px;color: #BC9622;}
+
+}
+
+.imgLogo{
+    position:fixed;
+    top: 4%;
+    left: 0%;
+    z-index: 0;
+    /*display: grid;
+    grid-column: 1;
+    grid-row: 1;*/
+    width:100px;
+    height: 100px;
+    overflow-wrap: break-word;
+    animation-name: rollinDi;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+}
+@keyframes rollinDi{
+    0% {translate: 0px;}
+    100%{translate:44.5vw;rotate:360deg;}
+    
+}
+
+/*.finalFilepng{
+    margin:auto;
+    top:0px;
+    width:100px;
+    height:100px;
+}
+*/
+@font-face {
+    font-family: "Boracho";
+    src: url(Borracho-M5Yn.ttf) format("opentype");
+}
+.gridCont{
+  
+    display:grid;
+    grid-column: auto;
+    position: top;
+    background-color: #8722af;
+}
+.videoSpot{
+    display: block;
+    padding-top: 10px;
+    border:10px #8722af;
+    border-width: 10px;
+    text-align: center;
+}
