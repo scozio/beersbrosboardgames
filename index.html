@@ -1,30 +1,673 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="prettybeer.css">
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Playwrite+AU+VIC:wght@100..400&display=swap" rel="stylesheet"> 
-      <title>Beers. Bros. Boardgames.</title>
-      <audio control autoplay id="audioIntro" preload="auto">
-         <source src="aLittleDrunk.wav" type="audio/wav" d>
-      </audio>
-      <!-- <h1 class="BB1"><em>Beers. Bros.<img src="Logotest1.png" class="imgLogo" alt="Test.">Boardgames.</em></h1>
-      <p class="finalFilepng"><img src="Logotest2.png" class="finalFilepng" alt="Test 2"></p> -->
-      <div class="gridCont">
-      <h1 class="BB3" ><em>Beers.Bros &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="Logotest3.png" class="imgLogo" alt="I failed.">Boardgames.</em></h1>
-      
-      </div> 
-   </head>
-   <nav>
-      
-   </nav>
-   <body>
-      <div class = videoSpot style="text-align:center">
-      <iframe width="640" height="360" src="https://www.youtube.com/embed/PIG4GE0EeKU" title="5 obscure fighting game spin-offs I&#39;ve never played before!" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen ></iframe>
-      </div>  
-   </body> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryuutama Character Sheet</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .character-sheet {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #34495e;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 5px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .stat-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .dragon-die {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 5px;
+        }
+        
+        .condition-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .ryuu-counter {
+            text-align: center;
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        .weather-terrain {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .save-button {
+            background-color: #2ecc71;
+        }
+        
+        .save-button:hover {
+            background-color: #27ae60;
+        }
+        
+        .equipment-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .equipment-input input {
+            flex: 1;
+        }
+        
+        .traveling-checks {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        #output {
+            white-space: pre-wrap;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ryuutama Character Sheet</h1>
+    <div class="character-sheet">
+        <!-- Basic Information -->
+        <div class="section">
+            <div class="section-title">Character Information</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Character Name</label>
+                    <input type="text" id="characterName" placeholder="Character Name">
+                </div>
+                <div class="form-group">
+                    <label>Player Name</label>
+                    <input type="text" id="playerName" placeholder="Player Name">
+                </div>
+                <div class="form-group">
+                    <label>Level</label>
+                    <input type="number" id="level" min="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <input type="text" id="gender" placeholder="Gender">
+                </div>
+                <div class="form-group">
+                    <label>EXP</label>
+                    <input type="number" id="exp" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="age" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Class</label>
+                    <input type="text" id="class" placeholder="Class">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <input type="text" id="type" placeholder="Type">
+                </div>
+            </div>
+        </div>
 
+        <!-- Main Stats -->
+        <div class="section">
+            <div class="section-title">Main Stats</div>
+            <div class="grid">
+                <div class="stat-group">
+                    <div class="dragon-die">STR</div>
+                    <input type="number" id="str" min="1" max="12" value="6" oninput="updateTotals()">
+                    <small>Die Size: <span id="strDie">d6</span></small>
+                </div>
+                <div class="stat-group">
+                    <div class="dragon-die">DEX</div>
+                    <input type="number" id="dex" min="1" max="12" value="6" oninput="updateTotals()">
+                    <small>Die Size: <span id="dexDie">d6</span></small>
+                </div>
+                <div class="stat-group">
+                    <div class="dragon-die">INT</div>
+                    <input type="number" id="int" min="1" max="12" value="6" oninput="updateTotals()">
+                    <small>Die Size: <span id="intDie">d6</span></small>
+                </div>
+                <div class="stat-group">
+                    <div class="dragon-die">SPI</div>
+                    <input type="number" id="spi" min="1" max="12" value="6" oninput="updateTotals()">
+                    <small>Die Size: <span id="spiDie">d6</span></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combat Stats -->
+        <div class="section">
+            <div class="section-title">Combat</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Initiative</label>
+                    <input type="text" id="initiative" value="d6" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Accuracy</label>
+                    <input type="text" id="accuracy" value="d6" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Damage</label>
+                    <input type="text" id="damage" value="d6" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Defensive Points</label>
+                    <input type="text" id="defensivePoints" value="d6" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fumble Points -->
+        <div class="section">
+            <div class="section-title">Fumble Points</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Mind (STR + SPI)</label>
+                    <input type="number" id="mindFumble" value="12" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Body (SPI + STR)</label>
+                    <input type="number" id="bodyFumble" value="12" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Condition -->
+        <div class="section">
+            <div class="section-title">Condition</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Max HP</label>
+                    <input type="number" id="maxHp" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Current HP</label>
+                    <input type="number" id="currentHp" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Max MP</label>
+                    <input type="number" id="maxMp" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Current MP</label>
+                    <input type="number" id="currentMp" min="0" value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Ryuu Tama -->
+        <div class="section">
+            <div class="section-title">Ryuu Tama</div>
+            <div class="ryuu-counter">
+                <h3>Ryuu Points: <span id="ryuuCount">0/5</span></h3>
+                <div style="margin-top: 10px;">
+                    <button onclick="adjustRyuu(-1)">-</button>
+                    <button onclick="adjustRyuu(1)">+</button>
+                </div>
+                <p><small>If over 10, add 1 dice size to any 1 stat</small></p>
+            </div>
+        </div>
+
+        <!-- Equipment -->
+        <div class="section">
+            <div class="section-title">Equipment</div>
+            <div class="form-group">
+                <label>Mastered Weapon</label>
+                <input type="text" id="weapon" placeholder="Weapon">
+            </div>
+            <div class="form-group">
+                <label>Shield</label>
+                <input type="text" id="shield" placeholder="Shield">
+            </div>
+            <div class="form-group">
+                <label>Armor</label>
+                <input type="text" id="armor" placeholder="Armor">
+            </div>
+            <div class="form-group">
+                <label>Personal Item</label>
+                <input type="text" id="personalItem" placeholder="Personal Item">
+            </div>
+        </div>
+
+        <!-- Traveling Rules -->
+        <div class="section">
+            <div class="section-title">Traveling Rules</div>
+            <div class="traveling-checks">
+                <div>
+                    <h4>Movement Check</h4>
+                    <p>[STR + DEX]: <span id="movementCheck">d12</span></p>
+                </div>
+                <div>
+                    <h4>Direction Check</h4>
+                    <p>[INT + INT]: <span id="directionCheck">d12</span></p>
+                </div>
+                <div>
+                    <h4>Camp Check</h4>
+                    <p>[DEX + INT]: <span id="campCheck">d12</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather & Terrain -->
+        <div class="section">
+            <div class="section-title">Weather & Terrain</div>
+            <div class="form-group">
+                <label>Current Weather</label>
+                <select id="weatherSelect" onchange="updateWeatherEffect()">
+                    <option value="">None</option>
+                    <option value="rain">Rain</option>
+                    <option value="strongWind">Strong Wind</option>
+                    <option value="fog">Fog</option>
+                    <option value="hot">Hot</option>
+                    <option value="cold">Cold</option>
+                    <option value="hardRain">Hard Rain</option>
+                    <option value="snow">Snow</option>
+                    <option value="deepFog">Deep Fog</option>
+                    <option value="dark">Dark</option>
+                    <option value="hurricane">Hurricane</option>
+                    <option value="blizzard">Blizzard</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Current Terrain</label>
+                <select id="terrainSelect" onchange="updateTerrainEffect()">
+                    <option value="">None</option>
+                    <option value="grassland">Grassland</option>
+                    <option value="wasteland">Wasteland</option>
+                    <option value="woods">Woods</option>
+                    <option value="highlands">Highlands</option>
+                    <option value="rocky">Rocky Terrain</option>
+                    <option value="deepForest">Deep Forest</option>
+                    <option value="swamp">Swamp</option>
+                    <option value="mountain">Mountain</option>
+                    <option value="desert">Desert</option>
+                    <option value="jungle">Jungle</option>
+                    <option value="alpine">Alpine</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Status Effects -->
+        <div class="section">
+            <div class="section-title">Status Effects</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Injury</label>
+                    <input type="number" id="injury" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Tired</label>
+                    <input type="number" id="tired" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Poison</label>
+                    <input type="number" id="poison" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Muddled</label>
+                    <input type="number" id="muddled" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Sick</label>
+                    <input type="number" id="sick" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Shock</label>
+                    <input type="number" id="shock" min="0" value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="section">
+            <div class="section-title">Additional Information</div>
+            <div class="form-group">
+                <label>Image Color / Appearance</label>
+                <textarea id="appearance" rows="2" placeholder="Describe appearance"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Hometown / Reason for Travel</label>
+                <textarea id="hometown" rows="2" placeholder="Hometown and travel reason"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="notes" rows="3" placeholder="Additional notes"></textarea>
+            </div>
+        </div>
+
+        <!-- Button Group -->
+        <div class="button-group">
+            <button onclick="saveCharacter()" class="save-button">Save Character</button>
+            <button onclick="loadCharacter()">Load Character</button>
+            <button onclick="exportCharacter()">Export as JSON</button>
+            <button onclick="importCharacter()">Import JSON</button>
+        </div>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        let ryuuPoints = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTotals();
+        });
+
+        function updateTotals() {
+            const str = parseInt(document.getElementById('str').value);
+            const dex = parseInt(document.getElementById('dex').value);
+            const int = parseInt(document.getElementById('int').value);
+            const spi = parseInt(document.getElementById('spi').value);
+
+            // Update die sizes
+            document.getElementById('strDie').textContent = getDieSize(str);
+            document.getElementById('dexDie').textContent = getDieSize(dex);
+            document.getElementById('intDie').textContent = getDieSize(int);
+            document.getElementById('spiDie').textContent = getDieSize(spi);
+
+            // Update initiative (DEX die)
+            document.getElementById('initiative').value = getDieSize(dex);
+            
+            // Update accuracy (DEX die)
+            document.getElementById('accuracy').value = getDieSize(dex);
+            
+            // Update damage (STR die)
+            document.getElementById('damage').value = getDieSize(str);
+            
+            // Update defensive points (SPI die)
+            document.getElementById('defensivePoints').value = getDieSize(spi);
+
+            // Update fumble points
+            document.getElementById('mindFumble').value = str + spi;
+            document.getElementById('bodyFumble').value = spi + str;
+
+            // Update traveling checks
+            document.getElementById('movementCheck').textContent = getCombinedDieSize(str, dex);
+            document.getElementById('directionCheck').textContent = getCombinedDieSize(int, int);
+            document.getElementById('campCheck').textContent = getCombinedDieSize(dex, int);
+        }
+
+        function getDieSize(value) {
+            if (value <= 4) return 'd4';
+            if (value <= 6) return 'd6';
+            if (value <= 8) return 'd8';
+            if (value <= 10) return 'd10';
+            return 'd12';
+        }
+
+        function getCombinedDieSize(val1, val2) {
+            const combined = val1 + val2;
+            return getDieSize(combined);
+        }
+
+        function adjustRyuu(amount) {
+            ryuuPoints += amount;
+            if (ryuuPoints < 0) ryuuPoints = 0;
+            document.getElementById('ryuuCount').textContent = ryuuPoints + '/5';
+        }
+
+        function updateWeatherEffect() {
+            // Weather effects implementation
+            // You can add specific logic here based on weather
+        }
+
+        function updateTerrainEffect() {
+            // Terrain effects implementation
+            // You can add specific logic here based on terrain
+        }
+
+        function saveCharacter() {
+            const character = gatherCharacterData();
+            localStorage.setItem('ryuutamaCharacter', JSON.stringify(character));
+            alert('Character saved!');
+        }
+
+        function loadCharacter() {
+            const saved = localStorage.getItem('ryuutamaCharacter');
+            if (saved) {
+                const character = JSON.parse(saved);
+                fillCharacterData(character);
+                alert('Character loaded!');
+            } else {
+                alert('No saved character found!');
+            }
+        }
+
+        function exportCharacter() {
+            const character = gatherCharacterData();
+            const dataStr = JSON.stringify(character, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'ryuutama-character.json';
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importCharacter() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.readAsText(file, 'UTF-8');
+                reader.onload = readerEvent => {
+                    const content = readerEvent.target.result;
+                    const character = JSON.parse(content);
+                    fillCharacterData(character);
+                }
+            }
+            
+            input.click();
+        }
+
+        function gatherCharacterData() {
+            return {
+                characterName: document.getElementById('characterName').value,
+                playerName: document.getElementById('playerName').value,
+                level: document.getElementById('level').value,
+                gender: document.getElementById('gender').value,
+                exp: document.getElementById('exp').value,
+                age: document.getElementById('age').value,
+                characterClass: document.getElementById('class').value,
+                type: document.getElementById('type').value,
+                stats: {
+                    str: document.getElementById('str').value,
+                    dex: document.getElementById('dex').value,
+                    int: document.getElementById('int').value,
+                    spi: document.getElementById('spi').value
+                },
+                condition: {
+                    maxHp: document.getElementById('maxHp').value,
+                    currentHp: document.getElementById('currentHp').value,
+                    maxMp: document.getElementById('maxMp').value,
+                    currentMp: document.getElementById('currentMp').value
+                },
+                equipment: {
+                    weapon: document.getElementById('weapon').value,
+                    shield: document.getElementById('shield').value,
+                    armor: document.getElementById('armor').value,
+                    personalItem: document.getElementById('personalItem').value
+                },
+                environment: {
+                    weather: document.getElementById('weatherSelect').value,
+                    terrain: document.getElementById('terrainSelect').value
+                },
+                statusEffects: {
+                    injury: document.getElementById('injury').value,
+                    tired: document.getElementById('tired').value,
+                    poison: document.getElementById('poison').value,
+                    muddled: document.getElementById('muddled').value,
+                    sick: document.getElementById('sick').value,
+                    shock: document.getElementById('shock').value
+                },
+                additional: {
+                    appearance: document.getElementById('appearance').value,
+                    hometown: document.getElementById('hometown').value,
+                    notes: document.getElementById('notes').value
+                },
+                ryuuPoints: ryuuPoints
+            };
+        }
+
+        function fillCharacterData(character) {
+            document.getElementById('characterName').value = character.characterName || '';
+            document.getElementById('playerName').value = character.playerName || '';
+            document.getElementById('level').value = character.level || '1';
+            document.getElementById('gender').value = character.gender || '';
+            document.getElementById('exp').value = character.exp || '0';
+            document.getElementById('age').value = character.age || '';
+            document.getElementById('class').value = character.characterClass || '';
+            document.getElementById('type').value = character.type || '';
+            
+            // Stats
+            if (character.stats) {
+                document.getElementById('str').value = character.stats.str || '6';
+                document.getElementById('dex').value = character.stats.dex || '6';
+                document.getElementById('int').value = character.stats.int || '6';
+                document.getElementById('spi').value = character.stats.spi || '6';
+            }
+            
+            // Condition
+            if (character.condition) {
+                document.getElementById('maxHp').value = character.condition.maxHp || '0';
+                document.getElementById('currentHp').value = character.condition.currentHp || '0';
+                document.getElementById('maxMp').value = character.condition.maxMp || '0';
+                document.getElementById('currentMp').value = character.condition.currentMp || '0';
+            }
+            
+            // Equipment
+            if (character.equipment) {
+                document.getElementById('weapon').value = character.equipment.weapon || '';
+                document.getElementById('shield').value = character.equipment.shield || '';
+                document.getElementById('armor').value = character.equipment.armor || '';
+                document.getElementById('personalItem').value = character.equipment.personalItem || '';
+            }
+            
+            // Environment
+            if (character.environment) {
+                document.getElementById('weatherSelect').value = character.environment.weather || '';
+                document.getElementById('terrainSelect').value = character.environment.terrain || '';
+            }
+            
+            // Status Effects
+            if (character.statusEffects) {
+                document.getElementById('injury').value = character.statusEffects.injury || '0';
+                document.getElementById('tired').value = character.statusEffects.tired || '0';
+                document.getElementById('poison').value = character.statusEffects.poison || '0';
+                document.getElementById('muddled').value = character.statusEffects.muddled || '0';
+                document.getElementById('sick').value = character.statusEffects.sick || '0';
+                document.getElementById('shock').value = character.statusEffects.shock || '0';
+            }
+            
+            // Additional Info
+            if (character.additional) {
+                document.getElementById('appearance').value = character.additional.appearance || '';
+                document.getElementById('hometown').value = character.additional.hometown || '';
+                document.getElementById('notes').value = character.additional.notes || '';
+            }
+            
+            // Ryuu Points
+            ryuuPoints = character.ryuuPoints || 0;
+            document.getElementById('ryuuCount').textContent = ryuuPoints + '/5';
+            
+            updateTotals();
+        }
+    </script>
+</body>
 </html>
