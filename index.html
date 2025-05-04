@@ -154,7 +154,45 @@
             margin-top: 20px;
             display: none;
         }
-    </style>
+            .dice-selector {
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .dice-select, .dice-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        #diceResults h3 {
+            margin: 0;
+            color: #34495e;
+        }
+        
+        .roll-result {
+            font-size: 1.5em;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #2ecc71;
+        }
+        
+        .failure {
+            color: #e74c3c;
+        }
+        
+        .critical {
+            color: #f39c12;
+        }
+        </style>
 </head>
 <body>
     <h1>Ryuutama Character Sheet</h1>
@@ -268,16 +306,16 @@
             <div class="section-title">Condition</div>
             <div class="grid">
                 <div class="form-group">
-                    <label>Max HP</label>
-                    <input type="number" id="maxHp" min="0" value="0">
+                    <label>Max HP (STR × 2)</label>
+                    <input type="number" id="maxHp" min="0" value="0" readonly style="background-color: #f0f0f0;">
                 </div>
                 <div class="form-group">
                     <label>Current HP</label>
                     <input type="number" id="currentHp" min="0" value="0">
                 </div>
                 <div class="form-group">
-                    <label>Max MP</label>
-                    <input type="number" id="maxMp" min="0" value="0">
+                    <label>Max MP (SPI × 2)</label>
+                    <input type="number" id="maxMp" min="0" value="0" readonly style="background-color: #f0f0f0;">
                 </div>
                 <div class="form-group">
                     <label>Current MP</label>
@@ -434,7 +472,53 @@
             <button onclick="importCharacter()">Import JSON</button>
         </div>
 
-        <div id="output"></div>
+        <!-- Dice Tray -->
+        <div class="section">
+            <div class="section-title">Dice Tray</div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px;">
+                <div class="dice-selector">
+                    <h4>Roll Type</h4>
+                    <select id="rollType" class="dice-select" onchange="toggleSecondDie()">
+                        <option value="single">Single Die</option>
+                        <option value="double" selected>Two Dice</option>
+                    </select>
+                </div>
+                <div class="dice-selector">
+                    <h4>First Die</h4>
+                    <select id="firstDie" class="dice-select">
+                        <option value="d4">d4</option>
+                        <option value="d6" selected>d6</option>
+                        <option value="d8">d8</option>
+                        <option value="d10">d10</option>
+                        <option value="d12">d12</option>
+                    </select>
+                </div>
+                <div class="dice-selector" id="secondDieContainer">
+                    <h4>Second Die</h4>
+                    <select id="secondDie" class="dice-select">
+                        <option value="d4">d4</option>
+                        <option value="d6" selected>d6</option>
+                        <option value="d8">d8</option>
+                        <option value="d10">d10</option>
+                        <option value="d12">d12</option>
+                    </select>
+                </div>
+                <div class="dice-selector">
+                    <h4>Target Number</h4>
+                    <input type="number" id="targetNumber" value="7" min="1" max="24" class="dice-input">
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button onclick="rollDice()" style="font-size: 1.2em; padding: 15px 30px; background-color: #e74c3c;">
+                    Roll Dice!
+                </button>
+            </div>
+            
+            <div id="diceResults" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; min-height: 100px;">
+                <h3>Roll Results will appear here</h3>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -444,6 +528,99 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateTotals();
         });
+
+        function toggleSecondDie() {
+            const rollType = document.getElementById('rollType').value;
+            const secondDieContainer = document.getElementById('secondDieContainer');
+            
+            if (rollType === 'single') {
+                secondDieContainer.style.display = 'none';
+            } else {
+                secondDieContainer.style.display = 'block';
+            }
+        }
+
+        function rollDice() {
+            const rollType = document.getElementById('rollType').value;
+            const firstDie = document.getElementById('firstDie').value;
+            const targetNumber = parseInt(document.getElementById('targetNumber').value);
+            
+            // Get die values
+            const firstDieValue = getDieValue(firstDie);
+            
+            // Roll the first die
+            const roll1 = rollSingleDie(firstDieValue);
+            let total = roll1;
+            let roll2 = null;
+            
+            // Roll second die if needed
+            if (rollType === 'double') {
+                const secondDie = document.getElementById('secondDie').value;
+                const secondDieValue = getDieValue(secondDie);
+                roll2 = rollSingleDie(secondDieValue);
+                total = roll1 + roll2;
+            }
+            
+            // Check for critical success (doubles for two dice)
+            const isCritical = rollType === 'double' && roll1 === roll2;
+            
+            // Check for success/failure
+            const isSuccess = total >= targetNumber;
+            
+            // Display results
+            let resultHTML = `<h3>Roll Results</h3>`;
+            
+            if (rollType === 'single') {
+                resultHTML += `
+                    <p>
+                        <strong>${firstDie.toUpperCase()}:</strong> ${roll1}
+                    </p>
+                    <div class="roll-result ${isSuccess ? 'success' : 'failure'}">
+                        Result: ${total}
+                    </div>
+                `;
+            } else {
+                const secondDie = document.getElementById('secondDie').value;
+                resultHTML += `
+                    <p>
+                        <strong>${firstDie.toUpperCase()}:</strong> ${roll1} 
+                        <strong>${secondDie.toUpperCase()}:</strong> ${roll2}
+                    </p>
+                    <div class="roll-result ${isCritical ? 'critical' : (isSuccess ? 'success' : 'failure')}">
+                        Total: ${total}
+                    </div>
+                `;
+            }
+            
+            resultHTML += `<p>Target Number: ${targetNumber}</p>`;
+            
+            if (rollType === 'double' && isCritical) {
+                resultHTML += '<p class="critical" style="font-size: 1.2em;">CRITICAL SUCCESS! (Doubles)</p>';
+            } else if (isSuccess) {
+                resultHTML += '<p class="success" style="font-size: 1.2em;">Success!</p>';
+            } else if (rollType === 'double' && roll1 === 1 && roll2 === 1) {
+                resultHTML += '<p class="failure" style="font-size: 1.2em;">FUMBLE! (Snake Eyes)</p>';
+            } else {
+                resultHTML += '<p class="failure" style="font-size: 1.2em;">Failure</p>';
+            }
+            
+            document.getElementById('diceResults').innerHTML = resultHTML;
+        }
+        
+        function getDieValue(dieType) {
+            switch(dieType) {
+                case 'd4': return 4;
+                case 'd6': return 6;
+                case 'd8': return 8;
+                case 'd10': return 10;
+                case 'd12': return 12;
+                default: return 6;
+            }
+        }
+        
+        function rollSingleDie(sides) {
+            return Math.floor(Math.random() * sides) + 1;
+        }
 
         function updateTotals() {
             const str = parseInt(document.getElementById('str').value);
@@ -477,6 +654,23 @@
             document.getElementById('movementCheck').textContent = getCombinedDieSize(str, dex);
             document.getElementById('directionCheck').textContent = getCombinedDieSize(int, int);
             document.getElementById('campCheck').textContent = getCombinedDieSize(dex, int);
+
+            // Auto-calculate HP and MP
+            const maxHp = str * 2;
+            const maxMp = spi * 2;
+            document.getElementById('maxHp').value = maxHp;
+            document.getElementById('maxMp').value = maxMp;
+            
+            // If current HP/MP are empty or higher than max, set them to max
+            const currentHp = parseInt(document.getElementById('currentHp').value);
+            const currentMp = parseInt(document.getElementById('currentMp').value);
+            
+            if (isNaN(currentHp) || currentHp > maxHp) {
+                document.getElementById('currentHp').value = maxHp;
+            }
+            if (isNaN(currentMp) || currentMp > maxMp) {
+                document.getElementById('currentMp').value = maxMp;
+            }
         }
 
         function getDieSize(value) {
